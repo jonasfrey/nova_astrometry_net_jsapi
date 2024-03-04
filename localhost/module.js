@@ -197,6 +197,32 @@ let f_o_submission_info = async function(
             ...o_data,
         }
 }
+let f_o_job_info = async function(
+    s_api_key, 
+    n_id_job
+){
+    let o_session = await f_o_session(s_api_key);
+    let s_url_jobresult_info = `https://nova.astrometry.net/api/jobs/${n_id_job}/info/`
+    let o_resp = await f_o_resp_fetch_nova_astronometry_net(
+        s_url_jobresult_info, 
+        {
+            session: o_session.session
+        }
+    );
+    if(!o_resp.ok){
+        throw Error(
+            JSON.stringify(
+                {
+                    s_msg: 'when trying to fetch', 
+                    s_url_fetch, 
+                    o_resp
+                }, null, 4
+            )
+        )
+    }
+    let o_job_info = await o_resp.json();
+    return {n_id_job: n_id_job, ...o_job_info}
+}
 
 let f_a_o_job_info = async function(
     s_api_key,
@@ -211,14 +237,10 @@ let f_a_o_job_info = async function(
             if(typeof n_id_job != 'number'){
                 return false;
             }
-            let s_url_jobresult_info = `https://nova.astrometry.net/api/jobs/${n_id_job}/info/`
-            let o_job_info = await (await f_o_resp_fetch_nova_astronometry_net(
-                s_url_jobresult_info, 
-                {
-                    session: o_session.session
-                }
-            )).json();
-            return {n_id_job: n_id_job, ...o_job_info}
+            return await f_o_job_info(
+                s_api_key, 
+                n_id_job
+            )
         }
     ).filter(v=>v!==false));
     return a_o_job_result;
@@ -294,13 +316,110 @@ let f_o_platesolving_result = async function(
     }
 
 }
+let f_a_n_id_job = async function(s_api_key){
+    let o_session = await f_o_session(s_api_key);
+    //possible api urls
+    //     re_path(r'^api/login/?$', api_login, name='api_login'),
+    // re_path(r'^api/upload/?$', api_upload, name='api_upload'),
+    // re_path(r'^api/url_upload/?$', url_upload, name='api_url_upload'),
+    // re_path(r'^api/sdss_image_for_wcs/?$', api_sdss_image_for_wcs, name='api_sdss_image_for_wcs'),
+    // re_path(r'^api/galex_image_for_wcs/?$', api_galex_image_for_wcs, name='api_galex_image_for_wcs'),
+    // re_path(r'^api/submission_images/?$', api_submission_images, name='api_submission_images'),
+    // re_path(r'^api/submissions/(?P<sub_id>' + idpattern + r')/?$', submission_status, name='api_submission_status'),
+    // re_path(r'^api/myjobs/?', myjobs, name='api_myjobs'),
+    // re_path(r'^api/jobs/(?P<job_id>' + idpattern + r')/?$', job_status, name='api_job_status'),
+    // re_path(r'^api/jobs/(?P<job_id>' + idpattern + r')/calibration/?$', calibration, name='api_calibration'),
+    // re_path(r'^api/jobs/(?P<job_id>' + idpattern + r')/tags/?$', tags, name='api_tags'),
+    // re_path(r'^api/jobs/(?P<job_id>' + idpattern + r')/machine_tags/?$', machine_tags, name='api_machine_tags'),
+    // re_path(r'^api/jobs/(?P<job_id>' + idpattern + r')/objects_in_field/?$', objects_in_field, name='api_objects_in_field'),
+    // re_path(r'^api/jobs/(?P<job_id>' + idpattern + r')/annotations/?$', annotations_in_field, name='api_annotations_in_field'),
+    // re_path(r'^api/jobs/(?P<job_id>' + idpattern + r')/info/?$', job_info, name='api_job_info'),
+    // re_path(r'^api/jobs_by_tag/?$', jobs_by_tag, name='api_jobs_by_tag'),
+
+    let s_url_fetch = `https://nova.astrometry.net/api/myjobs`
+    let o_resp = await f_o_resp_fetch_nova_astronometry_net(
+        s_url_fetch,
+        {
+            session: o_session.session
+        }
+    );
+    if(!o_resp.ok){
+        throw Error(
+            JSON.stringify(
+                {
+                    s_msg: 'when trying to fetch', 
+                    s_url_fetch, 
+                    o_resp
+                }, null, 4
+            )
+        )
+    }
+    let o_data_resp = await o_resp.json();
+    return o_data_resp?.jobs;
+}
+let f_a_n_image_id = async function(){
+    let a_n_id_image = Array.from(document.querySelectorAll('a')).filter(o=>o.getAttribute('href').includes('user_images')).map(o=>o.getAttribute('href'))
+}
+let f_v_o_job_info__from_s_filename_original = async function(
+    s_api_key,
+    s_filename_original, 
+    n_promise_batch_size = 3 // how many fetch requests to make simultaniously
+){
+    let v_o_job_info = null;
+    return new Promise(
+        async (f_res)=>{
+
+            let a_n_id_job = await f_a_n_id_job(s_api_key);
+            o_config_and_cache.a_n_id_job = a_n_id_job;
+            // a_n_id_job = a_n_id_job.slice(0,20);
+            for(let n_idx = 0; n_idx < a_n_id_job.length; n_idx+=n_promise_batch_size){
+                await Promise.all(
+                    new Array(n_promise_batch_size)
+                        .fill(0)
+                        .map((n, n_idx2)=>{
+                            let n_idx3 = parseInt(n_idx)+parseInt(n_idx2);
+                            let n_id_job = a_n_id_job?.[n_idx3];
+                            if(!n_id_job){
+                                return false
+                            }
+                            let o_job_info__from_cache = o_config_and_cache?.a_o_job_info?.find(o=>{
+                                return o?.original_filename == s_filename_original
+                            });
+                            if(o_job_info__from_cache){
+                                v_o_job_info = o_job_info__from_cache
+                                return f_res(o_job_info__from_cache);
+                            }
+                            return f_o_job_info(s_api_key, n_id_job).then(
+                                o_job_info =>{
+                                    if(!o_config_and_cache.a_o_job_info){
+                                        o_config_and_cache.a_o_job_info = []
+                                    }
+                                    o_config_and_cache.a_o_job_info.push(o_job_info)
+                                    if(o_job_info?.original_filename == s_filename_original){
+                                        v_o_job_info = o_job_info
+                                        return f_res(o_job_info)
+                                    }
+                                }
+                            );
+        
+                        }).filter(v=>v !== false)
+                )
+            }
+            return f_res(v_o_job_info)
+        }
+    )
+
+}
 
 export {
+    f_o_job_info,
     f_o_submission,
     f_o_session,
     o_config_and_cache,
     f_o_submission_info,
     f_a_o_job_info, 
     f_a_o_job_result, 
-    f_o_platesolving_result
+    f_o_platesolving_result,
+    f_a_n_id_job, 
+    f_v_o_job_info__from_s_filename_original
 }

@@ -411,6 +411,34 @@ let f_v_o_job_info__from_s_filename_original = async function(
 
 }
 
+
+let f_o_annotations = async function(
+    s_api_key,
+    n_id_job
+){
+    let o_session = await f_o_session(s_api_key);
+
+    let s_url_fetch = `https://nova.astrometry.net/api/jobs/${n_id_job}/annotations/`
+    let o_resp = await f_o_resp_fetch_nova_astronometry_net(
+        s_url_fetch,
+        {
+            session: o_session.session
+        }
+    );
+    if(!o_resp.ok){
+        throw Error(
+            JSON.stringify(
+                {
+                    s_msg: 'when trying to fetch', 
+                    s_url_fetch, 
+                    o_resp
+                }, null, 4
+            )
+        )
+    }
+    let o_data_resp = await o_resp.json();
+    return o_data_resp;
+}
 export {
     f_o_job_info,
     f_o_submission,
@@ -421,5 +449,6 @@ export {
     f_a_o_job_result, 
     f_o_platesolving_result,
     f_a_n_id_job, 
-    f_v_o_job_info__from_s_filename_original
+    f_v_o_job_info__from_s_filename_original,
+    f_o_annotations
 }

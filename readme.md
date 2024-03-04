@@ -1,16 +1,21 @@
-<!-- {"s_msg":"this file was automatically generated","s_by":"f_generate_markdown.module.js","s_ts_created":"Mon Mar 04 2024 01:13:57 GMT+0100 (Central European Standard Time)","n_ts_created":1709511237052} -->
+<!-- {"s_msg":"this file was automatically generated","s_by":"f_generate_markdown.module.js","s_ts_created":"Mon Mar 04 2024 10:50:53 GMT+0100 (Central European Standard Time)","n_ts_created":1709545853800} -->
 # import es6 module ( in browser, deno (js), or node , if node finally supports es6 modules lol)
 ```javascript
 import {
-    f_a_o_job_info
-     f_a_o_job_result
-     f_o_platesolving_result
-     f_o_session
-     f_o_submission
-     f_o_submission_info
-} from "./module.js"
+    f_a_n_id_job,
+    f_a_o_job_info,
+    f_a_o_job_result,
+    f_o_annotations,
+    f_o_job_info,
+    f_o_platesolving_result,
+    f_o_session,
+    f_o_submission,
+    f_o_submission_info,
+    f_v_o_job_info__from_s_filename_original
+}
+from "./module.js"
 // use the web url !
-//"https://deno.land/x/nova_astrometry_net_jsapi@[version_or_leave_blank]/mod.js"
+// from "https://deno.land/x/nova_astrometry_net_jsapi@[version_or_leave_blank]/mod.js"
 
 ```
 ![nova api logo](./nova_api.png)
@@ -214,4 +219,124 @@ will repeatitly fetch the job info until the job is not 'solving' anymore / has 
             //         original_filename: "file-name-of-image.jpg"
             //     }
             // ]
+```
+## f_a_n_id_job
+will get an array of job id's
+```javascript
+            let o = await f_a_n_id_job(
+                s_api_key_real
+            )
+            console.log(o) 
+            //     [
+            //       9551938, 9552847, 9552851, 9552856, 9552861, 9552863, 9552867,
+            //       9552870, 9552886, 9552894, 9552898, 9552912, 9552916, 9552849,
+            //       9552854, 9552857, 9552862, 9552866, 9552871, 9552895, 9552899,
+            //       9552913, 9552914, 9552922, 9552926, 9552915, 9552917, 9552923,
+            //       9552935, 9552937, 9552941, 9552952, 9552957, 9552961, 9552965,
+            //       9552972, 9552974, 9552987, 9552990, 9552997, 9553001, 9553005,
+            //       9553006, 9553048, 9553061, 9553069, 9553093, 9553133, 9553142,
+            //       9553146, 9552918, 9552924, 9552938, 9552942, 9552953, 9552958,
+            //       9552962, 9552966, 9552973, 9552988, 9552991, 9552994, 9552998,
+            //       9553002, 9553007, 9553035, 9553090, 9553110, 9553114, 9552927,
+            //       9552936, 9552939, 9552943, 9552951, 9552954, 9552960, 9552963,
+            //       9552967, 9552975, 9552976, 9552989, 9552992, 9552999, 9553003,
+            //       9553008, 9553010, 9553098, 9553102, 9553126, 9553130, 9553137,
+            //       9552955, 9552959, 9552964, 9552968, 9552969, 9552977, 9552986,
+            //       9552993, 9552995,
+            //       ... 2994 more items
+            //     ],
+```
+## f_o_job_info
+will get info about a job
+```javascript
+            let o_job_info = await f_o_job_info(
+                s_api_key_real, 
+                9551938 //  n_id_job
+            )
+            console.log(o_job_info) 
+            // {
+            //     n_id_job: 9551938,
+            //     objects_in_field: [ "Cigar Galaxy", "M 82", "NGC 3034" ],
+            //     machine_tags: [ "NGC 3034", "Cigar Galaxy", "M 82" ],
+            //     tags: [ "NGC 3034", "Cigar Galaxy", "M 82" ],
+            //     status: "success",
+            //     original_filename: "2023-10-04T23-50-58_Coordinates_Clear_1000ms_USERNAME.jpg",
+            //     calibration: {
+            //       ra: 148.83458995906102,
+            //       dec: 69.66873006117007,
+            //       radius: 0.7005482223449413,
+            //       pixscale: 0.8707542162333208,
+            //       orientation: 2.4218060393524183,
+            //       parity: 1
+            //     }
+            //   }
+
+```
+## f_v_o_job_info__from_s_filename_original
+this will search throu all job id's until a job with the filename is found
+if no job is found, null is returned
+important!: this can take a long time
+```javascript
+            let o_job_info = await f_v_o_job_info__from_s_filename_original(
+                s_api_key_real, 
+                '2023-10-10T01-01-46_Coordinates_Open_33s_test_student_last-T.jpg'
+            );
+            console.log(o_job_info) 
+            // {
+            //     n_id_job: 9551938,
+            //     objects_in_field: [ "Cigar Galaxy", "M 82", "NGC 3034" ],
+            //     machine_tags: [ "NGC 3034", "Cigar Galaxy", "M 82" ],
+            //     tags: [ "NGC 3034", "Cigar Galaxy", "M 82" ],
+            //     status: "success",
+            //     original_filename: "2023-10-04T23-50-58_Coordinates_Clear_1000ms_USERNAME.jpg",
+            //     calibration: {
+            //       ra: 148.83458995906102,
+            //       dec: 69.66873006117007,
+            //       radius: 0.7005482223449413,
+            //       pixscale: 0.8707542162333208,
+            //       orientation: 2.4218060393524183,
+            //       parity: 1
+            //     }
+            //   }
+            let o_job_info2 = await f_v_o_job_info__from_s_filename_original(
+                s_api_key_real,
+                'not_existing.jpg'
+            );
+            console.log(o_job_info2) 
+            // null
+```
+## f_o_annotations
+```javascript
+            let o = await f_o_annotations(
+                s_api_key_real, 
+                9551938
+            )
+            console.log(o)
+            // {
+            //     annotations: [
+            //       {
+            //         type: "hd",
+            //         names: [ "HD 85161" ],
+            //         pixelx: 2739.483008158546,
+            //         pixely: 1226.6745400681152,
+            //         radius: 0
+            //       },
+            //       {
+            //         type: "hd",
+            //         names: [ "HD 85533" ],
+            //         pixelx: 1818.218235102598,
+            //         pixely: 518.0479892219521,
+            //         radius: 0
+            //       },
+            //       {
+            //         type: "ngc",
+            //         names: [ "NGC 3034" ],
+            //         pixelx: 1851.8858767355575,
+            //         pixely: 2013.1847426280988,
+            //         radius: 378.6372732140727
+            //       }
+            //     ]
+            //   }
+
+
 ```

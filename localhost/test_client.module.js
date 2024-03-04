@@ -14,6 +14,7 @@ import {
     f_a_n_id_job,
     f_a_o_job_info,
     f_a_o_job_result,
+    f_o_annotations,
     f_o_job_info,
     f_o_platesolving_result,
     f_o_session,
@@ -343,7 +344,7 @@ let a_o_test =
             //     }
             //   }
             let o_job_info2 = await f_v_o_job_info__from_s_filename_original(
-                s_api_key_real, 
+                s_api_key_real,
                 'not_existing.jpg'
             );
             console.log(o_job_info2) 
@@ -351,7 +352,43 @@ let a_o_test =
             //readme.md:end
         }),
         
+        f_o_test("f_o_annotations", async () => {
+            //readme.md:start
+            //md: ## f_o_annotations
+            let o = await f_o_annotations(
+                s_api_key_real, 
+                9551938
+            )
+            console.log(o)
+            // {
+            //     annotations: [
+            //       {
+            //         type: "hd",
+            //         names: [ "HD 85161" ],
+            //         pixelx: 2739.483008158546,
+            //         pixely: 1226.6745400681152,
+            //         radius: 0
+            //       },
+            //       {
+            //         type: "hd",
+            //         names: [ "HD 85533" ],
+            //         pixelx: 1818.218235102598,
+            //         pixely: 518.0479892219521,
+            //         radius: 0
+            //       },
+            //       {
+            //         type: "ngc",
+            //         names: [ "NGC 3034" ],
+            //         pixelx: 1851.8858767355575,
+            //         pixely: 2013.1847426280988,
+            //         radius: 378.6372732140727
+            //       }
+            //     ]
+            //   }
 
+
+            //readme.md:end
+        }),
         
 
     ]

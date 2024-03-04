@@ -8,7 +8,20 @@ import {
     f_o_test
 } from "https://deno.land/x/deno_test_server_and_client_side@1.3/mod.js"
 
-import { f_a_o_job_info, f_a_o_job_result, f_o_platesolving_result, f_o_session, f_o_submission, f_o_submission_info } from "./module.js"
+//readme.md:start
+//md: # import es6 module ( in browser, deno (js), or node , if node finally supports es6 modules lol)
+import {
+    f_a_o_job_info
+     f_a_o_job_result
+     f_o_platesolving_result
+     f_o_session
+     f_o_submission
+     f_o_submission_info
+} from "./module.js"
+// use the web url !
+//"https://deno.land/x/nova_astrometry_net_jsapi@[version_or_leave_blank]/mod.js"
+
+//readme.md:end
 
 import {
     f_ddd

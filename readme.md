@@ -1,4 +1,18 @@
-<!-- {"s_msg":"this file was automatically generated","s_by":"f_generate_markdown.module.js","s_ts_created":"Mon Mar 04 2024 01:05:24 GMT+0100 (Central European Standard Time)","n_ts_created":1709510724003} -->
+<!-- {"s_msg":"this file was automatically generated","s_by":"f_generate_markdown.module.js","s_ts_created":"Mon Mar 04 2024 01:13:57 GMT+0100 (Central European Standard Time)","n_ts_created":1709511237052} -->
+# import es6 module ( in browser, deno (js), or node , if node finally supports es6 modules lol)
+```javascript
+import {
+    f_a_o_job_info
+     f_a_o_job_result
+     f_o_platesolving_result
+     f_o_session
+     f_o_submission
+     f_o_submission_info
+} from "./module.js"
+// use the web url !
+//"https://deno.land/x/nova_astrometry_net_jsapi@[version_or_leave_blank]/mod.js"
+
+```
 ![nova api logo](./nova_api.png)
 # nova.astronomy.net js api , easy communication with the http API
 ## f_o_platesolving_result
